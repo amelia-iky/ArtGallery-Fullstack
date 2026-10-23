@@ -12,31 +12,41 @@ migrate = Migrate()
 
 
 def create_app():
-    load_dotenv()  # Load .env file
-    app = Flask(__name__)
+    load_dotenv()
 
-    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))  # satu level di atas app/
-    static_folder_path = os.path.join(base_dir, 'static')
+    base_dir = os.path.abspath(
+        os.path.dirname(os.path.dirname(__file__))
+    )
+    static_folder_path = os.path.join(base_dir, "static")
 
-    app = Flask(__name__,
-                static_folder=static_folder_path,
-                static_url_path='/static')
+    app = Flask(
+        __name__,
+        static_folder=static_folder_path,
+        static_url_path="/static"
+    )
 
     # Load configurations
     app.config.from_object(Config)
-    app.config["SECRET_KEY"] = Config.SECRET_KEY  # ✅ Simpan kunci rahasia
+    app.config["SECRET_KEY"] = Config.SECRET_KEY
 
-    # ✅ Inisialisasi CORS untuk semua route /api/*
+    # CORS untuk frontend lokal dan Vercel
     CORS(
         app,
-        resources={r"/api/*": {"origins": "http://localhost:5173"}},
-        supports_credentials=True,  # ✅ penting jika pakai token Authorization
-        expose_headers=["Content-Type", "Authorization"],  # ✅ jika ingin header tertentu terlihat
+        resources={
+            r"/api/*": {
+                "origins": [
+                    "http://localhost:5173",
+                    "https://art-gallery-fullstack.vercel.app",
+                ]
+            }
+        },
+        supports_credentials=True,
+        expose_headers=["Content-Type", "Authorization"],
         allow_headers=["Content-Type", "Authorization"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # ✅ agar OPTIONS tidak diblok
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     )
 
-    # Inisialisasi DB dan migrasi
+    # Inisialisasi database dan migrasi
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -48,9 +58,21 @@ def create_app():
     from app.routes.ruangvideo import ruang_video_bp
     from app.routes.auth import auth_bp
 
-    app.register_blueprint(users_bp, url_prefix="/api/users")
-    app.register_blueprint(karya_seni_bp, url_prefix="/api/karya_seni")
-    app.register_blueprint(ruang_video_bp, url_prefix="/api/ruang_video")
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
+    app.register_blueprint(
+        users_bp,
+        url_prefix="/api/users"
+    )
+    app.register_blueprint(
+        karya_seni_bp,
+        url_prefix="/api/karya_seni"
+    )
+    app.register_blueprint(
+        ruang_video_bp,
+        url_prefix="/api/ruang_video"
+    )
+    app.register_blueprint(
+        auth_bp,
+        url_prefix="/api/auth"
+    )
 
     return app
