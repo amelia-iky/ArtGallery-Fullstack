@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+.ant-tag-blue {
+  @apply bg-blue-100 text-blue-800 border border-blue-200;
+}
+
+/* Animasi navbar link */
+.nav-link {
+  @apply transition-colors duration-300;
+}
+
+.custom-upload-box .ant-upload {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px;
+}
+
+.upload-content {
+  text-align: center;
+}
+
+/* Sembunyikan scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
